@@ -117,7 +117,7 @@ class CrashReportDatabase {
 
     //! \brief Adds an attachment to the report.
     //!
-    //! \note This function is not yet implemented on macOS or Windows.
+    //! \note This function is not yet implemented on macOS.
     //!
     //! \param[in] name The key and name for the attachment, which will be
     //!     included in the http upload. The attachment will not appear in the
@@ -396,6 +396,8 @@ class CrashReportDatabase {
 
  protected:
   CrashReportDatabase() {}
+
+  static bool AttachmentNameIsOK(const std::string& name);
 
  private:
   //! \brief Adjusts a crash report record’s metadata to account for an upload
