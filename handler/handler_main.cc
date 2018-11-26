@@ -149,9 +149,7 @@ void Usage(const base::FilePath& me) {
 #endif  // OS_LINUX || OS_ANDROID
 "      --url=URL               send crash reports to this Breakpad server URL,\n"
 "                              only if uploads are enabled for the database\n"
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
 "      --attachment=NAME=PATH  attach a copy of a file, along with a crash dump\n"
-#endif // OS_WIN || OS_FUCHSIA
 "      --help                  display this help and exit\n"
 "      --version               output version information and exit\n",
           me.value().c_str());
@@ -207,8 +205,6 @@ bool AddKeyValueToMap(std::map<std::string, std::string>* map,
   }
   return true;
 }
-
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
 // Overloaded version, to accept base::FilePath as a VALUE.
 bool AddKeyValueToMap(std::map<std::string, base::FilePath>* map,
                       const std::string& key_value,
@@ -233,7 +229,6 @@ bool AddKeyValueToMap(std::map<std::string, base::FilePath>* map,
   }
   return true;
 }
-#endif // OS_WIN || OS_FUCHSIA
 
 // Calls Metrics::HandlerLifetimeMilestone, but only on the first call. This is
 // to prevent multiple exit events from inadvertently being recorded, which
@@ -572,9 +567,7 @@ int HandlerMain(int argc,
     kOptionSanitizationInformation,
 #endif
     kOptionURL,
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
     kOptionAttachment,
-#endif // OS_WIN || OS_FUCHSIA
     // Standard options.
     kOptionHelp = -2,
     kOptionVersion = -3,
@@ -633,9 +626,7 @@ int HandlerMain(int argc,
      kOptionSanitizationInformation},
 #endif  // OS_LINUX || OS_ANDROID
     {"url", required_argument, nullptr, kOptionURL},
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
     {"attachment", required_argument, nullptr, kOptionAttachment},
-#endif // OS_WIN || OS_FUCHSIA
     {"help", no_argument, nullptr, kOptionHelp},
     {"version", no_argument, nullptr, kOptionVersion},
     {nullptr, 0, nullptr, 0},
@@ -773,14 +764,12 @@ int HandlerMain(int argc,
         options.url = optarg;
         break;
       }
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
       case kOptionAttachment: {
         if (!AddKeyValueToMap(&options.attachments, optarg, "--attachment")) {
           return ExitFailure();
         }
         break;
       }
-#endif // OS_WIN || OS_FUCHSIA
       case kOptionHelp: {
         Usage(me);
         MetricsRecordExit(Metrics::LifetimeMilestone::kExitedEarly);
@@ -904,10 +893,7 @@ int HandlerMain(int argc,
       database.get(),
       static_cast<CrashReportUploadThread*>(upload_thread.Get()),
       &options.annotations,
-#if defined(OS_WIN) || defined(OS_FUCHSIA)
-      // TODO(scottmg): for all platforms.
       &options.attachments,
-#endif // OS_WIN || OS_FUCHSIA
       user_stream_sources);
 
  #if defined(OS_LINUX) || defined(OS_ANDROID)
